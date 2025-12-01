@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from app.database.session import engine, Base
+from app.routers.products.products import router as products_router
 
 # Import modèles
 import app.models.user
@@ -25,6 +26,8 @@ def root():
 # ROUTES AUTH
 app.include_router(register_router)
 app.include_router(login_router)
+app.include_router(products_router)
+
 
 # ROUTES PROTECTED (avec rôles)
 app.include_router(admin_router)
