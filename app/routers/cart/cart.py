@@ -8,12 +8,14 @@ from app.models.product import Product
 router = APIRouter(prefix="/cart", tags=["Cart"])
 
 
+# 🛒 1 — Voir le panier
 @router.get("/")
 def get_cart(db: Session = Depends(get_db), user=Depends(get_current_user)):
     items = db.query(CartItem).filter(CartItem.user_id == user.id).all()
     return items
 
 
+# 🛒 2 — Ajouter un produit au panier
 @router.post("/add/{product_id}")
 def add_to_cart(product_id: int, db: Session = Depends(get_db), user=Depends(get_current_user)):
 
@@ -24,7 +26,7 @@ def add_to_cart(product_id: int, db: Session = Depends(get_db), user=Depends(get
 
     # vérifier si déjà dans le panier
     item = (
-        db.query(CcartItem)
+        db.query(CartItem)
         .filter(CartItem.user_id == user.id, CartItem.product_id == product_id)
         .first()
     )
@@ -46,6 +48,7 @@ def add_to_cart(product_id: int, db: Session = Depends(get_db), user=Depends(get
     return {"detail": "Produit ajouté au panier"}
 
 
+# 🛒 3 — Modifier quantité
 @router.put("/update/{item_id}")
 def update_cart_item(item_id: int, quantity: int, db: Session = Depends(get_db), user=Depends(get_current_user)):
 
@@ -63,6 +66,7 @@ def update_cart_item(item_id: int, quantity: int, db: Session = Depends(get_db),
     return {"detail": "Quantité mise à jour"}
 
 
+# 🛒 4 — Supprimer un item
 @router.delete("/remove/{item_id}")
 def remove_cart_item(item_id: int, db: Session = Depends(get_db), user=Depends(get_current_user)):
 
@@ -75,6 +79,7 @@ def remove_cart_item(item_id: int, db: Session = Depends(get_db), user=Depends(g
     return {"detail": "Item supprimé"}
 
 
+# 🛒 5 — Vider tout le panier
 @router.delete("/clear")
 def clear_cart(db: Session = Depends(get_db), user=Depends(get_current_user)):
 
