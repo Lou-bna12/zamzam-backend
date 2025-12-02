@@ -91,7 +91,7 @@ def update_order_status(order_id: int, status: str, db: Session = Depends(get_db
     if not order:
         raise HTTPException(404, "Commande introuvable")
 
-    valid_status = ["pending", "paid", "shipped", "delivered"]
+    valid_status = ["En attente", "Payée", "Expédiée", "Livrée"]
 
     if status not in valid_status:
         raise HTTPException(400, "Statut invalide")
