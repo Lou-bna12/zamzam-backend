@@ -1,6 +1,8 @@
 from sqlalchemy import Column, Integer, String, Boolean
 from app.database.session import Base
 from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship
+
 
 
 class User(Base):
@@ -14,4 +16,6 @@ class User(Base):
     role = Column(String, default="client")
     is_active = Column(Boolean, default=True)
     cart_items = relationship("CartItem", back_populates="user", cascade="all, delete-orphan")
+    wishlist_items = relationship("WishlistItem", back_populates="user", cascade="all, delete-orphan")
+
 

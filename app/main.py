@@ -9,6 +9,7 @@ import app.models.user
 from app.routers.auth.register import router as register_router
 from app.routers.auth.login import router as login_router
 from app.routers.cart.cart import router as cart_router
+from app.routers.wishlist.wishlist import router as wishlist_router
 
 # Import routes PROTECTED
 from app.routers.protected.admin import router as admin_router
@@ -29,6 +30,7 @@ app.include_router(register_router)
 app.include_router(login_router)
 app.include_router(products_router)
 app.include_router(cart_router)
+app.include_router(wishlist_router)
 
 
 # ROUTES PROTECTED (avec rôles)
