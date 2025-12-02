@@ -24,21 +24,21 @@ def get_db():
 @router.post("/login")
 def login(data: LoginRequest, db: Session = Depends(get_db)):
 
-    # 1️⃣ Vérifier si l'email existe
     user = db.query(User).filter(User.email == data.email).first()
     if not user:
         raise HTTPException(status_code=400, detail="Invalid email or password")
 
-    # 2️⃣ Vérifier le mot de passe
     if not verify_password(data.password, user.password):
         raise HTTPException(status_code=400, detail="Invalid email or password")
 
-    # 3️⃣ Créer un token JWT complet avec rôle + id + email
-    token = create_access_token({
-        "id": user.id,
+    # ADD: le champ "sub" obligatoire
+    token_data = {
+        "sub": str(user.id),   # ← nécessaire
         "email": user.email,
         "role": user.role
-    })
+    }
+
+    token = create_access_token(token_data)
 
     return {
         "access_token": token,
