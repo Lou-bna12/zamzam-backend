@@ -11,3 +11,5 @@ class User(Base):
     phone = Column(String, nullable=True)
     role = Column(String, default="client")
     is_active = Column(Boolean, default=True)
+    cart_items = relationship("CartItem", back_populates="user", cascade="all, delete-orphan")
+

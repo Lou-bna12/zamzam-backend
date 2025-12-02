@@ -8,6 +8,7 @@ import app.models.user
 # Import routes AUTH
 from app.routers.auth.register import router as register_router
 from app.routers.auth.login import router as login_router
+from app.routers.cart.cart import router as cart_router
 
 # Import routes PROTECTED
 from app.routers.protected.admin import router as admin_router
@@ -27,6 +28,7 @@ def root():
 app.include_router(register_router)
 app.include_router(login_router)
 app.include_router(products_router)
+app.include_router(cart_router)
 
 
 # ROUTES PROTECTED (avec rôles)
