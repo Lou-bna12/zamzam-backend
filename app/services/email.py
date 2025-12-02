@@ -93,20 +93,20 @@ def send_status_notification(order):
 
     status_messages = {
         "pending": {
-            "title": "Votre commande est en attente",
-            "message": "Votre commande a bien été reçue et est en attente de traitement."
+            "title": "Votre commande est en attente ⏳",
+            "message": "Votre commande a bien été reçue et est actuellement en attente de traitement."
         },
         "paid": {
-            "title": "Votre paiement a été confirmé 💳",
-            "message": "Merci ! Votre commande a été payée avec succès."
+            "title": "Votre commande a été payée 💳",
+            "message": "Merci ! Votre paiement a bien été confirmé."
         },
         "shipped": {
-            "title": "Votre commande a été expédiée 📦",
-            "message": "Bonne nouvelle ! Votre commande est maintenant en route."
+            "title": "Votre commande a été confirmée 📦",
+            "message": "Bonne nouvelle ! Votre commande est confirmée et en préparation."
         },
         "delivered": {
             "title": "Votre commande a été livrée 🏁",
-            "message": "Votre commande a été livrée. Nous espérons que vous en êtes satisfait !"
+            "message": "Votre commande a été livrée avec succès. Nous espérons que tout est parfait !"
         }
     }
 

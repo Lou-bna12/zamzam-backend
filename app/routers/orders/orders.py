@@ -101,26 +101,22 @@ def update_order_status(order_id: int, status: str, db: Session = Depends(get_db
     if not order:
         raise HTTPException(404, "Commande introuvable")
 
-    valid_status = ["En attente", "Payée", "Expédiée", "Livrée"]
+    valid_status = ["pending", "paid", "shipped", "delivered"]
 
     if status not in valid_status:
-        raise HTTPException(400, "Statut invalide")
+        raise HTTPException(400, f"Statut invalide. Statuts autorisés : {valid_status}")
 
+    # Mettre à jour le statut
     order.status = status
     db.commit()
+    db.refresh(order)
 
-    # 🔥 Email automatique selon le statut
-    subject = f"Mise à jour de votre commande #{order.id}"
-    html = f"""
-    <h2>Votre commande #{order.id}</h2>
-    <p>Le statut a été mis à jour : <strong>{status}</strong></p>
-    <p>Merci de votre confiance ❤️</p>
-    """
+    # ⚡ Envoi de la notification email
+    from app.services.email import send_status_notification
+    send_status_notification(order)
 
-    send_email(
-        to_email=order.user.email,
-        subject=subject,
-        html_content=html
-    )
+    return {
+        "detail": f"Statut mis à jour : {status}",
+        "order_id": order.id
+    }
 
-    return {"detail": f"Statut mis à jour : {status}"}
