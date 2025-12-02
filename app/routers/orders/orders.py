@@ -51,3 +51,52 @@ def create_order(db: Session = Depends(get_db), user=Depends(get_current_user)):
         "order_id": order.id,
         "total": total_price
     }
+
+# 2️⃣ Voir les commandes de l'utilisateur
+@router.get("/")
+def get_my_orders(db: Session = Depends(get_db), user=Depends(get_current_user)):
+    orders = db.query(Order).filter(Order.user_id == user.id).all()
+    return orders
+
+# 3️⃣ Voir détails d'une commande
+@router.get("/{order_id}")
+def get_order_detail(order_id: int, db: Session = Depends(get_db), user=Depends(get_current_user)):
+
+    order = db.query(Order).filter(Order.id == order_id, Order.user_id == user.id).first()
+
+    if not order:
+        raise HTTPException(404, "Commande introuvable")
+
+    return {
+        "order_id": order.id,
+        "total": order.total_price,
+        "status": order.status,
+        "created_at": order.created_at,
+        "items": [
+            {
+                "product_id": item.product_id,
+                "quantity": item.quantity,
+                "price": item.price
+            }
+            for item in order.items
+        ]
+    }
+
+# 4️⃣ Admin : changer le statut d'une commande
+@router.patch("/status/{order_id}")
+def update_order_status(order_id: int, status: str, db: Session = Depends(get_db)):
+
+    order = db.query(Order).filter(Order.id == order_id).first()
+
+    if not order:
+        raise HTTPException(404, "Commande introuvable")
+
+    valid_status = ["pending", "paid", "shipped", "delivered"]
+
+    if status not in valid_status:
+        raise HTTPException(400, "Statut invalide")
+
+    order.status = status
+    db.commit()
+
+    return {"detail": f"Statut mis à jour : {status}"}
