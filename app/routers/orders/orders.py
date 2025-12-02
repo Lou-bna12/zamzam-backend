@@ -4,6 +4,7 @@ from app.core.security import get_current_user
 from app.database.session import get_db
 from app.models.cart import CartItem
 from app.models.order import Order, OrderItem
+from app.services.email import send_order_confirmation, send_email
 
 router = APIRouter(prefix="/orders", tags=["Orders"])
 
@@ -46,17 +47,25 @@ def create_order(db: Session = Depends(get_db), user=Depends(get_current_user)):
 
     db.commit()
 
+    # 🔥 Récupérer les items créés
+    order_items = db.query(OrderItem).filter(OrderItem.order_id == order.id).all()
+
+    # 🔥 Envoi de l'email automatique
+    send_order_confirmation(order, order_items)
+
     return {
         "detail": "Commande créée avec succès",
         "order_id": order.id,
         "total": total_price
     }
 
+
 # 2️⃣ Voir les commandes de l'utilisateur
 @router.get("/")
 def get_my_orders(db: Session = Depends(get_db), user=Depends(get_current_user)):
     orders = db.query(Order).filter(Order.user_id == user.id).all()
     return orders
+
 
 # 3️⃣ Voir détails d'une commande
 @router.get("/{order_id}")
@@ -82,6 +91,7 @@ def get_order_detail(order_id: int, db: Session = Depends(get_db), user=Depends(
         ]
     }
 
+
 # 4️⃣ Admin : changer le statut d'une commande
 @router.patch("/status/{order_id}")
 def update_order_status(order_id: int, status: str, db: Session = Depends(get_db)):
@@ -98,5 +108,19 @@ def update_order_status(order_id: int, status: str, db: Session = Depends(get_db
 
     order.status = status
     db.commit()
+
+    # 🔥 Email automatique selon le statut
+    subject = f"Mise à jour de votre commande #{order.id}"
+    html = f"""
+    <h2>Votre commande #{order.id}</h2>
+    <p>Le statut a été mis à jour : <strong>{status}</strong></p>
+    <p>Merci de votre confiance ❤️</p>
+    """
+
+    send_email(
+        to_email=order.user.email,
+        subject=subject,
+        html_content=html
+    )
 
     return {"detail": f"Statut mis à jour : {status}"}
