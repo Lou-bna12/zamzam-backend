@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>FCM Token Generator</title>
+</head>
+<body>
+  <h2>Générateur de Token FCM — ZamZam</h2>
+  <p>Token :</p>
+  <textarea id="token" rows="10" cols="80"></textarea>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/firebase-messaging-sw.js')
+        .then(() => console.log("Service Worker FCM OK"))
+        .catch((err) => console.error("Erreur SW:", err));
+    }
+  </script>
+  
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCV5Yz4_JDH5ruzYOSEHfqFNHaeQBTgRjc",
+      authDomain: "zamzam-notifications.firebaseapp.com",
+      projectId: "zamzam-notifications",
+      storageBucket: "zamzam-notifications.firebasestorage.app",
+      messagingSenderId: "994562800924",
+      appId: "1:994562800924:web:26589b49ea0218ed804ed9"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const messaging = getMessaging(app);
+
+    Notification.requestPermission().then(async (permission) => {
+      if (permission === "granted") {
+        const token = await getToken(messaging, {
+          vapidKey: "BPNflibWm88Nd3tgpdF8bC_X17ET35hwr2g3FLzTEKRYqHZzWsJeiz7qTegapb3-Sa_Ce5nNDCyYtlmr-tGQOxY"
+        });
+
+        document.getElementById("token").value = token;
+        console.log("FCM Token:", token);
+      } else {
+        alert("Permission refusée !");
+      }
+    });
+  </script>
+</body>
+</html>

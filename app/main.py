@@ -12,6 +12,7 @@ from app.routers.cart.cart import router as cart_router
 from app.routers.wishlist.wishlist import router as wishlist_router
 from app.routers.orders.orders import router as orders_router
 from app.routers import test_email
+from app.routers.notifications import router as notifications_router
 
 # Import routes PROTECTED
 from app.routers.protected.admin import router as admin_router
@@ -35,6 +36,7 @@ app.include_router(cart_router)
 app.include_router(wishlist_router)
 app.include_router(orders_router)
 app.include_router(test_email.router)
+app.include_router(notifications_router)
 
 
 # ROUTES PROTECTED (avec rôles)
