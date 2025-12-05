@@ -11,3 +11,13 @@ firebase.initializeApp({
 });
 
 const messaging = firebase.messaging();
+
+// 🎉 Affichage de la notification reçue
+messaging.onBackgroundMessage((payload) => {
+  console.log("📩 Notification reçue :", payload);
+
+  self.registration.showNotification(payload.notification.title, {
+    body: payload.notification.body,
+    icon: "/favicon.ico"
+  });
+});
